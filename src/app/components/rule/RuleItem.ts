@@ -46,6 +46,12 @@ export class RuleItem implements OnInit {
     { key: 'files', title: '文件上传' },
     { key: 'apiCall', title: '调用第三方API' },
   ];
+  public ThirdPartyApiMethod: Array<any> = [
+    { key: 'get', title: 'get' },
+    { key: 'delete', title: 'delete' },
+    { key: 'post', title: 'post' },
+    { key: 'put', title: 'put' },
+  ];
 
   constructor() {
 
@@ -107,7 +113,7 @@ export class RuleItem implements OnInit {
   }
 
   onChange_RuleType(item) {
-    const { type, judgeInfo, files, cacheInfo, setValues, parentRelation, captcha,apiCall } = this.Rule;
+    const { type, judgeInfo, files, cacheInfo, setValues, parentRelation, captcha, apiCall } = this.Rule;
     if (item === 'judge' && !judgeInfo) {
       this.Rule.judgeInfo = {};
     } else if (item === 'cache' && !cacheInfo) {
@@ -122,11 +128,11 @@ export class RuleItem implements OnInit {
       // const tf = this.FileTypes[0];
       // this.Rule.files = { type: tf.key, filePath: './public/' + tf.key };
       this.Rule.files = this.defaultFileInfo;
-    }else if (type === 'apiCall' && !apiCall){
+    } else if (type === 'apiCall' && !apiCall) {
       this.Rule.apiCall = {};
     }
   }
- 
+
   btn_Click(type, index) {
     if (this.onMoveUpOrDown) {
       this.onMoveUpOrDown.emit({ type, index, OperatorType: this.OperatorType });
@@ -213,9 +219,37 @@ export class RuleItem implements OnInit {
 
   }
 
+  btnClickThirdPartyApi(apiParam, index, apiParamList, operator) {
+    if (operator === 1) {
+      if (index === -1) {
+        if (!apiParamList) {
+          apiParamList = [];
+          this.Rule.apiCall.ApiHeaderParams = apiParamList;
+        }
+      }
+      apiParamList.splice(index + 1, 0, {});
+      return;
+    }
 
+    apiParamList.splice(index, 1);
+  }
 
+  btnClickThirdPartyApiBody(apiParam, index, apiParamList, operator) {
+    if (operator === 1) {
+      if (index === -1) {
+        if (!apiParamList) {
+          apiParamList = [];
+          this.Rule.apiCall.ApiBodyParams = apiParamList;
+        }
+      }
+      apiParamList.splice(index + 1, 0, {});
+      return;
+    }
+    apiParamList.splice(index, 1);
+  }
 
-
+  onClickSetFixedValue(item) {
+    item.IsFixedValue = !item.IsFixedValue;
+  }
 
 }

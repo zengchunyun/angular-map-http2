@@ -1,8 +1,12 @@
 const fs = require('fs');
+const httpClient = require('http');
+const querystring = require('querystring');
+const url = require('url');
 const path = require('path');
 const Utility = require('../lib/Utility');
 const MySqlHelper = require('../ctrl_es6/DbHelper');
 const Log = new Utility().Log;
+const ThirdPartyApi = require('./__ThirdPartyApi');
 
 const queryFormat = function (query, values) {
   if (!values) return query;
@@ -238,6 +242,22 @@ class dealbusiness {
     }
   }
 
+  __Process_apicall(args) {
+    const api = new ThirdPartyApi(this.DbAccess);
+    const self = this;
+    api.CallApi(args, () => {
+      self.__ProcessNextRule(args);
+    }, (err) => {
+      self.__ProcessNextRule(Object.assign(args, { errInfo: err }));
+    });
+  }
+
+  /**
+   * 处理文件操作
+   * 
+   * @param {any} args 
+   * @memberof dealbusiness
+   */
   __Process_files(args) {
     const { Rule, RuleCollection, Options, Complete, Error } = args;
     const { files } = Options;
